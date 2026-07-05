@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -148,7 +148,7 @@
       color: var(--c);
     }
 
-    /* ── Профіль ── */
+    /* ── Profile modal ── */
     .modal {
       position: fixed;
       inset: 0;
@@ -426,7 +426,7 @@
 <body>
   <header>
     <h1>Formula 1 · 2026</h1>
-    <p>11 команд · 22 пілоти</p>
+    <p>11 teams · 22 drivers</p>
   </header>
 
   <div class="sheet" id="sheet"></div>
@@ -434,7 +434,7 @@
   <div class="modal" id="modal" hidden>
     <div class="modal-backdrop" id="modal-backdrop"></div>
     <div class="modal-panel" id="modal-panel">
-      <button class="modal-close" id="modal-close" aria-label="Закрити">×</button>
+      <button class="modal-close" id="modal-close" aria-label="Close">×</button>
 
       <div id="modal-driver">
         <div class="modal-head">
@@ -453,12 +453,12 @@
             <span id="m-team"></span>
           </div>
           <div class="info-grid">
-            <div class="info-item"><label>Національність</label><span id="m-nationality"></span></div>
-            <div class="info-item"><label>Вік</label><span id="m-age"></span></div>
-            <div class="info-item"><label>Дата народження</label><span id="m-dob"></span></div>
-            <div class="info-item"><label>Дебют у F1</label><span id="m-debut"></span></div>
-            <div class="info-item"><label>Титули</label><span id="m-titles"></span></div>
-            <div class="info-item"><label>Сезон</label><span>2026</span></div>
+            <div class="info-item"><label>Nationality</label><span id="m-nationality"></span></div>
+            <div class="info-item"><label>Age</label><span id="m-age"></span></div>
+            <div class="info-item"><label>Date of birth</label><span id="m-dob"></span></div>
+            <div class="info-item"><label>F1 debut</label><span id="m-debut"></span></div>
+            <div class="info-item"><label>Championships</label><span id="m-titles"></span></div>
+            <div class="info-item"><label>Season</label><span>2026</span></div>
           </div>
           <p class="modal-bio" id="m-bio"></p>
         </div>
@@ -474,20 +474,20 @@
         </div>
         <div class="modal-body">
           <div class="info-grid">
-            <div class="info-item"><label>Країна</label><span id="t-nationality"></span></div>
-            <div class="info-item"><label>База</label><span id="t-base"></span></div>
-            <div class="info-item"><label>Керівник</label><span id="t-principal"></span></div>
-            <div class="info-item"><label>Двигун</label><span id="t-engine"></span></div>
-            <div class="info-item"><label>Кубки конструкторів</label><span id="t-titles"></span></div>
-            <div class="info-item"><label>Перший сезон</label><span id="t-first"></span></div>
-            <div class="info-item"><label>Колір</label>
+            <div class="info-item"><label>Country</label><span id="t-nationality"></span></div>
+            <div class="info-item"><label>Base</label><span id="t-base"></span></div>
+            <div class="info-item"><label>Team principal</label><span id="t-principal"></span></div>
+            <div class="info-item"><label>Power unit</label><span id="t-engine"></span></div>
+            <div class="info-item"><label>Constructor titles</label><span id="t-titles"></span></div>
+            <div class="info-item"><label>First season</label><span id="t-first"></span></div>
+            <div class="info-item"><label>Team colour</label>
               <span class="color-row"><span class="color-swatch" id="t-color-swatch"></span><span id="t-color"></span></span>
             </div>
-            <div class="info-item"><label>Пілоти</label><span id="t-driver-count"></span></div>
+            <div class="info-item"><label>Drivers</label><span id="t-driver-count"></span></div>
           </div>
           <p class="modal-bio" id="t-bio"></p>
           <div style="margin-top:1.1rem">
-            <div class="roster-title">Склад 2026</div>
+            <div class="roster-title">2026 lineup</div>
             <div class="roster" id="t-roster"></div>
           </div>
         </div>

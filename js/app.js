@@ -1,14 +1,6 @@
 window.F1App = (() => {
-  const NAT_UK = {
-    British: "Великобританія", Australian: "Австралія", Italian: "Італія", Dutch: "Нідерланди",
-    French: "Франція", Monegasque: "Монако", Spanish: "Іспанія", Thai: "Таїланд",
-    "New Zealander": "Нова Зеландія", Canadian: "Канада", German: "Німеччина",
-    Brazilian: "Бразилія", Argentine: "Аргентина", Finnish: "Фінляндія", Mexican: "Мексика",
-    Austrian: "Австрія", American: "США",
-  };
-
-  const MONTHS_UK = ["січня","лютого","березня","квітня","травня","червня",
-                     "липня","серпня","вересня","жовтня","листопада","грудня"];
+  const MONTHS = ["January","February","March","April","May","June",
+                  "July","August","September","October","November","December"];
 
   const drivers = {};
   const teams = {};
@@ -26,7 +18,7 @@ window.F1App = (() => {
 
   function formatDate(iso) {
     const [y, m, d] = iso.split("-").map(Number);
-    return `${d} ${MONTHS_UK[m - 1]} ${y}`;
+    return `${MONTHS[m - 1]} ${d}, ${y}`;
   }
 
   function calcAge(iso) {
@@ -40,9 +32,8 @@ window.F1App = (() => {
 
   function titlesText(n) {
     if (n === 0) return "—";
-    if (n === 1) return "1 титул";
-    if (n >= 2 && n <= 4) return `${n} титули`;
-    return `${n} титулів`;
+    if (n === 1) return "1 title";
+    return `${n} titles`;
   }
 
   function open() {
@@ -70,16 +61,14 @@ window.F1App = (() => {
     document.getElementById("m-code").textContent = `#${d.number} · ${d.code}`;
     document.getElementById("m-team-logo").src = d.teamLogo;
     document.getElementById("m-team").textContent = d.teamName;
-    document.getElementById("m-nationality").textContent = NAT_UK[d.nationality] || d.nationality;
+    document.getElementById("m-nationality").textContent = d.country || d.nationality;
     document.getElementById("m-dob").textContent = formatDate(d.dateOfBirth);
-    document.getElementById("m-age").textContent = calcAge(d.dateOfBirth) + " років";
+    document.getElementById("m-age").textContent = `${calcAge(d.dateOfBirth)} years old`;
     document.getElementById("m-debut").textContent = d.debut;
     document.getElementById("m-titles").textContent = titlesText(d.titles);
     document.getElementById("m-bio").textContent = d.bio || "";
 
-    const teamRow = document.getElementById("m-team-row");
-    teamRow.dataset.teamId = driverTeamId[id];
-
+    document.getElementById("m-team-row").dataset.teamId = driverTeamId[id];
     open();
   }
 
@@ -95,7 +84,7 @@ window.F1App = (() => {
     document.getElementById("t-logo").alt = t.name;
     document.getElementById("t-name").textContent = t.name;
     document.getElementById("t-fullname").textContent = t.fullName;
-    document.getElementById("t-nationality").textContent = t.nationalityUk;
+    document.getElementById("t-nationality").textContent = t.country;
     document.getElementById("t-base").textContent = t.base;
     document.getElementById("t-principal").textContent = t.principal;
     document.getElementById("t-engine").textContent = t.engine;
@@ -106,13 +95,12 @@ window.F1App = (() => {
     document.getElementById("t-driver-count").textContent = t.drivers.map(d => d.lastName).join(", ");
     document.getElementById("t-bio").textContent = t.bio || "";
 
-    const roster = document.getElementById("t-roster");
-    roster.innerHTML = t.drivers.map(d => `
+    document.getElementById("t-roster").innerHTML = t.drivers.map(d => `
       <button class="roster-item" data-driver-id="${d.id}" type="button">
         <img src="${d.photoLarge || d.photo}" alt="${d.fullName}">
         <div class="roster-info">
           <span class="roster-name">${d.fullName}</span>
-          <span class="roster-num">#${d.number} · ${d.code} · ${NAT_UK[d.nationality] || d.nationality}</span>
+          <span class="roster-num">#${d.number} · ${d.code} · ${d.country || d.nationality}</span>
         </div>
       </button>
     `).join("");
