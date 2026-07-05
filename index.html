@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F1 2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    header p {
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 0.35rem;
+    }
+
+    .sheet {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .card {
+      width: 290px;
+      flex: 0 0 290px;
+      background: #161616;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #252525;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-head {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--c) 35%, #161616), #161616);
+      border-bottom: 3px solid var(--c);
+      padding: 1.25rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+
+    .card-head:hover { filter: brightness(1.12); }
+
+    .logo {
+      height: 64px;
+      max-width: 160px;
+      object-fit: contain;
+    }
+
+    .team-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .drivers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      flex: 1;
+    }
+
+    .driver {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0.5rem 1.1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .driver:hover {
+      background: color-mix(in srgb, var(--c) 12%, #161616);
+    }
+
+    .driver + .driver {
+      border-left: 1px solid #252525;
+    }
+
+    .photo-wrap {
+      width: 90px;
+      height: 105px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 3px solid var(--c);
+      background: #222;
+      margin-bottom: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .driver-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .driver-num {
+      margin-top: 0.3rem;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--c);
+    }
+
+    /* ── Профіль ── */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal[hidden] { display: none; }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-panel {
+      position: relative;
+      background: #141414;
+      border-radius: 18px;
+      border: 1px solid #2a2a2a;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      animation: pop 0.2s ease;
+    }
+
+    .modal-panel::-webkit-scrollbar {
+      display: none;
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: scale(0.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 2;
+      width: 2rem;
+      height: 2rem;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .modal-close:hover { background: rgba(0, 0, 0, 0.75); }
+
+    .modal-head {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 25%, #0a0a0a), #141414);
+      border-bottom: 4px solid var(--pc);
+    }
+
+    .modal-photo-hero {
+      position: relative;
+      width: 100%;
+      background: #0a0a0a;
+      line-height: 0;
+    }
+
+    .modal-photo {
+      width: 100%;
+      height: auto;
+      max-height: 380px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .modal-number-badge {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 1rem;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+      line-height: 1;
+    }
+
+    .modal-head-info {
+      padding: 1.25rem 1.5rem 1rem;
+    }
+
+    .modal-name {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .modal-code {
+      font-size: 0.85rem;
+      color: var(--pc);
+      font-weight: 700;
+      margin-top: 0.25rem;
+      letter-spacing: 0.08em;
+    }
+
+    .modal-number { display: none; }
+
+    .modal-bio {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #aaa;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #252525;
+    }
+
+    .modal-team-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: #1a1a1a;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .modal-team-row:hover { background: #222; }
+
+    .modal-team-row img {
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .modal-team-row span {
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .modal-body {
+      padding: 1.25rem 1.5rem 1.5rem;
+    }
+
+    .modal-team {
+      display: none;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem 1.25rem;
+    }
+
+    .info-item.full { grid-column: 1 / -1; }
+
+    .info-item label {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #666;
+      margin-bottom: 0.2rem;
+    }
+
+    .info-item span {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .modal-logo {
+      height: 72px;
+      max-width: 240px;
+      object-fit: contain;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-team-head {
+      padding: 2rem 1.5rem 1.25rem;
+      text-align: center;
+    }
+
+    .modal-subtitle {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.35rem;
+      font-weight: 500;
+    }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .color-swatch {
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 4px;
+      border: 1px solid #444;
+      flex-shrink: 0;
+    }
+
+    .roster-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #666;
+      margin-bottom: 0.65rem;
+    }
+
+    .roster {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .roster-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.65rem;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+      text-align: left;
+      width: 100%;
+      transition: background 0.15s;
+    }
+
+    .roster-item:hover {
+      background: color-mix(in srgb, var(--pc) 15%, #1a1a1a);
+    }
+
+    .roster-item img {
+      width: 48px;
+      height: 56px;
+      border-radius: 6px;
+      object-fit: cover;
+      object-position: top center;
+      border: 2px solid var(--pc);
+      flex-shrink: 0;
+    }
+
+    .roster-info { display: flex; flex-direction: column; gap: 0.1rem; }
+    .roster-name { font-weight: 700; font-size: 0.9rem; }
+    .roster-num { font-size: 0.78rem; color: #888; }
+
+    @media (max-width: 680px) {
+      .card {
+        width: calc((100% - 1rem) / 2);
+        flex: 0 0 calc((100% - 1rem) / 2);
+      }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        width: 100%;
+        flex: 0 0 100%;
+      }
+      .photo-wrap { width: 76px; height: 76px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Formula 1 · 2026</h1>
+    <p>11 команд · 22 пілоти</p>
+  </header>
+
+  <div class="sheet" id="sheet"></div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-panel" id="modal-panel">
+      <button class="modal-close" id="modal-close" aria-label="Закрити">×</button>
+
+      <div id="modal-driver">
+        <div class="modal-head">
+          <div class="modal-photo-hero">
+            <img class="modal-photo" id="m-photo" src="" alt="">
+            <div class="modal-number-badge" id="m-number"></div>
+          </div>
+          <div class="modal-head-info">
+            <div class="modal-name" id="m-name"></div>
+            <div class="modal-code" id="m-code"></div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="modal-team-row" id="m-team-row">
+            <img id="m-team-logo" src="" alt="">
+            <span id="m-team"></span>
+          </div>
+          <div class="info-grid">
+            <div class="info-item"><label>Національність</label><span id="m-nationality"></span></div>
+            <div class="info-item"><label>Вік</label><span id="m-age"></span></div>
+            <div class="info-item"><label>Дата народження</label><span id="m-dob"></span></div>
+            <div class="info-item"><label>Дебют у F1</label><span id="m-debut"></span></div>
+            <div class="info-item"><label>Титули</label><span id="m-titles"></span></div>
+            <div class="info-item"><label>Сезон</label><span>2026</span></div>
+          </div>
+          <p class="modal-bio" id="m-bio"></p>
+        </div>
+      </div>
+
+      <div id="modal-team" hidden>
+        <div class="modal-head">
+          <div class="modal-team-head">
+            <img class="modal-logo" id="t-logo" src="" alt="">
+            <div class="modal-name" id="t-name"></div>
+            <div class="modal-subtitle" id="t-fullname"></div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="info-grid">
+            <div class="info-item"><label>Країна</label><span id="t-nationality"></span></div>
+            <div class="info-item"><label>База</label><span id="t-base"></span></div>
+            <div class="info-item"><label>Керівник</label><span id="t-principal"></span></div>
+            <div class="info-item"><label>Двигун</label><span id="t-engine"></span></div>
+            <div class="info-item"><label>Кубки конструкторів</label><span id="t-titles"></span></div>
+            <div class="info-item"><label>Перший сезон</label><span id="t-first"></span></div>
+            <div class="info-item"><label>Колір</label>
+              <span class="color-row"><span class="color-swatch" id="t-color-swatch"></span><span id="t-color"></span></span>
+            </div>
+            <div class="info-item"><label>Пілоти</label><span id="t-driver-count"></span></div>
+          </div>
+          <p class="modal-bio" id="t-bio"></p>
+          <div style="margin-top:1.1rem">
+            <div class="roster-title">Склад 2026</div>
+            <div class="roster" id="t-roster"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="data/f1-2026.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    F1App.init();
+    const sheet = document.getElementById("sheet");
+
+    for (const team of window.F1_DATA.teams) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.style.setProperty("--c", team.color);
+
+      const driversHtml = team.drivers.map(d => `
+        <div class="driver" data-id="${d.id}" role="button" tabindex="0">
+          <div class="photo-wrap">
+            <img class="photo" src="${d.photo}" alt="${d.fullName}" loading="lazy">
+          </div>
+          <div class="driver-name">${d.firstName}<br>${d.lastName}</div>
+          <div class="driver-num">${d.number}</div>
+        </div>
+      `).join("");
+
+      card.innerHTML = `
+        <div class="card-head" data-team-id="${team.id}" role="button" tabindex="0">
+          <img class="logo" src="${team.logo}" alt="${team.name}">
+          <div class="team-name">${team.name}</div>
+        </div>
+        <div class="drivers">${driversHtml}</div>
+      `;
+      sheet.appendChild(card);
+    }
+
+    sheet.addEventListener("click", e => {
+      const driver = e.target.closest(".driver[data-id]");
+      if (driver) { e.stopPropagation(); F1App.openDriver(driver.dataset.id); return; }
+      const teamHead = e.target.closest(".card-head[data-team-id]");
+      if (teamHead) F1App.openTeam(teamHead.dataset.teamId);
+    });
+
+    sheet.addEventListener("keydown", e => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const driver = e.target.closest(".driver[data-id]");
+      if (driver) { e.preventDefault(); F1App.openDriver(driver.dataset.id); return; }
+      const teamHead = e.target.closest(".card-head[data-team-id]");
+      if (teamHead) { e.preventDefault(); F1App.openTeam(teamHead.dataset.teamId); }
+    });
+  </script>
+</body>
+</html>
